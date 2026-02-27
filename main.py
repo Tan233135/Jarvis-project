@@ -2,9 +2,11 @@ import speech_recognition as sr
 import webbrowser
 import pyttsx3
 import music
+import requests
 
 
 engine = pyttsx3.init()
+newsapi = "0a481e62177f487698f3378090473c8a"
 
 def speak(text):
     engine.say(text)
@@ -21,8 +23,16 @@ def processcommand(c):
        song = c.lower().split(" ")[1]
        link = music.music[song]
        webbrowser.open(link)
-    
-   
+    elif "news" in c.lower():
+       r = requests.get(f"https://newsapi.org/v2/everything?q=tesla&from=2026-01-27&sortBy=publishedAt&apiKey={newsapi}")
+       if r.status_code==200:
+          data = r.json()
+          articles=data.get('articles',[])
+          for article in articles:
+             speak(article['title'])
+    else:
+       pass
+
 
 if __name__ == "__main__":
     speak("Initializing.......")
